@@ -79,7 +79,7 @@ func New(rawurl string) EthMultiCaller {
 func (caller *EthMultiCaller) Execute(calls []Call) map[string]CallResponse {
 	var responses []CallResponse
 
-	var multiCalls = make([]MultiCall2.Multicall2Call, len(calls))
+	var multiCalls = make([]MultiCall2.Multicall2Call, 0, len(calls))
 
 	// Add calls to multicall structure for the contract
 	for _, call := range calls {
@@ -113,13 +113,8 @@ func (caller *EthMultiCaller) Execute(calls []Call) map[string]CallResponse {
 
 	// Create mapping for results. Be aware that we sometimes get two empty results initially, unsure why
 	results := make(map[string]CallResponse)
-	i := 0
-	for _, response := range responses {
-		if response.Success && len(response.ReturnData) == 0 {
-			continue
-		}
+	for i, response := range responses {
 		results[calls[i].Name] = response
-		i = i + 1
 	}
 
 	return results
